@@ -1,0 +1,67 @@
+package com.sport.formuladata.infrastructure.adapter.persistence;
+
+import com.sport.formuladata.domain.entity.Meeting;
+import com.sport.formuladata.domain.entity.Session;
+import com.sport.formuladata.domain.port.outbound.SessionRepositoryPort;
+import com.sport.formuladata.infrastructure.adapter.persistence.entity.MeetingEntity;
+import com.sport.formuladata.infrastructure.adapter.persistence.entity.SessionEntity;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Component
+public class SessionRepositoryAdapter implements SessionRepositoryPort {
+    private final JpaSessionRepository jpaRepository;
+
+    public SessionRepositoryAdapter(JpaSessionRepository jpaRepository) {
+        this.jpaRepository = jpaRepository;
+    }
+
+    @Override
+    public void saveAll(List<Session> sessions) {
+        List<SessionEntity> entities = sessions.stream()
+                .map(this::toEntity)
+                .collect(Collectors.toList());
+        jpaRepository.saveAll(entities);
+    }
+
+    @Override
+    public List<Session> findAll() {
+        return jpaRepository.findAll().stream()
+                .map(this::toDomain)
+                .collect(Collectors.toList());
+    }
+
+    private SessionEntity toEntity(Session session) {
+        SessionEntity entity = new SessionEntity();
+        entity.setSessionKey(session.sessionKey());
+        if (session.meeting() != null) {
+            MeetingEntity meetingEntity = new MeetingEntity();
+            meetingEntity.setMeetingKey(session.meeting().meetingKey());
+            entity.setMeeting(meetingEntity);
+        }
+        entity.setSessionType(session.sessionType());
+        entity.setSessionName(session.sessionName());
+        entity.setDateStart(session.dateStart());
+        entity.setDateEnd(session.dateEnd());
+        return entity;
+    }
+
+    private Session toDomain(SessionEntity entity) {
+        Meeting meeting = entity.getMeeting() != null
+                ? new Meeting(
+                entity.getMeeting().getMeetingKey(),
+                null, null, null, null, null
+        )
+                : null;
+        return new Session(
+                entity.getSessionKey(),
+                meeting,
+                entity.getSessionType(),
+                entity.getSessionName(),
+                entity.getDateStart(),
+                entity.getDateEnd()
+        );
+    }
+}

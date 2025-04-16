@@ -1,0 +1,54 @@
+package com.sport.formuladata.infrastructure.adapter.rest;
+
+import com.sport.formuladata.domain.entity.Driver;
+import com.sport.formuladata.domain.entity.Meeting;
+import com.sport.formuladata.domain.entity.Session;
+import com.sport.formuladata.domain.port.inbound.FetchOpenF1DataUseCase;
+import com.sport.formuladata.domain.port.inbound.GetDriversUseCase;
+import com.sport.formuladata.domain.port.inbound.GetMeetingsUseCase;
+import com.sport.formuladata.domain.port.inbound.GetSessionsUseCase;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/openf1")
+public class OpenF1Controller {
+    private final FetchOpenF1DataUseCase fetchOpenF1DataUseCase;
+    private final GetMeetingsUseCase getMeetingsUseCase;
+    private final GetSessionsUseCase getSessionsUseCase;
+    private final GetDriversUseCase getDriversUseCase;
+
+    public OpenF1Controller(
+            FetchOpenF1DataUseCase fetchOpenF1DataUseCase,
+            GetMeetingsUseCase getMeetingsUseCase,
+            GetSessionsUseCase getSessionsUseCase,
+            GetDriversUseCase getDriversUseCase
+    ) {
+        this.fetchOpenF1DataUseCase = fetchOpenF1DataUseCase;
+        this.getMeetingsUseCase = getMeetingsUseCase;
+        this.getSessionsUseCase = getSessionsUseCase;
+        this.getDriversUseCase = getDriversUseCase;
+    }
+
+    @PostMapping("/fetch")
+    public String fetchAndStoreData() {
+        fetchOpenF1DataUseCase.fetchAndStoreAllData();
+        return "Data fetched, stored, and published to Kafka successfully";
+    }
+
+    @GetMapping("/meetings")
+    public List<Meeting> getMeetings() {
+        return getMeetingsUseCase.getAllMeetings();
+    }
+
+    @GetMapping("/sessions")
+    public List<Session> getSessions() {
+        return getSessionsUseCase.getAllSessions();
+    }
+
+    @GetMapping("/drivers")
+    public List<Driver> getDrivers() {
+        return getDriversUseCase.getAllDrivers();
+    }
+}
