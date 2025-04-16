@@ -1,19 +1,20 @@
 package com.sport.formuladata.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDateTime;
 
 public record CarData(
-        Integer carDataId,
+        @JsonProperty("car_data_id") Integer carDataId,
         Session session,
         Driver driver,
-        LocalDateTime date,
-        Integer rpm,
-        Integer speed,
-        Integer gear,
-        Float throttle,
-        Float brake,
-        Boolean drs,
-        Float xPosition,
-        Float yPosition,
-        Float zPosition
+        @JsonProperty("date") LocalDateTime date,
+        @JsonProperty("rpm") Integer rpm,
+        @JsonProperty("speed") Integer speed,
+        @JsonProperty("gear") Integer gear,
+        @JsonProperty("throttle") Float throttle,
+        @JsonProperty("brake") Float brake,
+        @JsonProperty("drs") Boolean drs,
+        @JsonProperty("x_position") Float xPosition,
+        @JsonProperty("y_position") Float yPosition,
+        @JsonProperty("z_position") Float zPosition
 ) {}

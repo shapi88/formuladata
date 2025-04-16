@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface IntervalRepositoryPort {
     void saveAll(List<Interval> intervals);
+    List<Interval> findAll();
 }

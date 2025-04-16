@@ -1,6 +1,8 @@
 package com.sport.formuladata.infrastructure.adapter.persistence;
 
+import com.sport.formuladata.domain.entity.Driver;
 import com.sport.formuladata.domain.entity.Position;
+import com.sport.formuladata.domain.entity.Session;
 import com.sport.formuladata.domain.port.outbound.PositionRepositoryPort;
 import com.sport.formuladata.infrastructure.adapter.persistence.entity.DriverEntity;
 import com.sport.formuladata.infrastructure.adapter.persistence.entity.PositionEntity;
@@ -26,6 +28,13 @@ public class PositionRepositoryAdapter implements PositionRepositoryPort {
         jpaRepository.saveAll(entities);
     }
 
+    @Override
+    public List<Position> findAll() {
+        return jpaRepository.findAll().stream()
+                .map(this::toDomain)
+                .collect(Collectors.toList());
+    }
+
     private PositionEntity toEntity(Position position) {
         PositionEntity entity = new PositionEntity();
         entity.setPositionId(position.positionId());
@@ -42,5 +51,21 @@ public class PositionRepositoryAdapter implements PositionRepositoryPort {
         entity.setPosition(position.position());
         entity.setDate(position.date());
         return entity;
+    }
+
+    private Position toDomain(PositionEntity entity) {
+        Session session = entity.getSession() != null
+                ? new Session(entity.getSession().getSessionKey(), null, null, null, null, null)
+                : null;
+        Driver driver = entity.getDriver() != null
+                ? new Driver(entity.getDriver().getDriverNumber(), null, null, null, null)
+                : null;
+        return new Position(
+                entity.getPositionId(),
+                session,
+                driver,
+                entity.getPosition(),
+                entity.getDate()
+        );
     }
 }

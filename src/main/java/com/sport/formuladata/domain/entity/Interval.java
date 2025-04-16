@@ -1,12 +1,13 @@
 package com.sport.formuladata.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDateTime;
 
 public record Interval(
-        Integer intervalId,
+        @JsonProperty("interval_id") Integer intervalId,
         Session session,
         Driver driver,
-        Float gapToLeader,
-        Float intervalToAhead,
-        LocalDateTime date
+        @JsonProperty("gap_to_leader") Float gapToLeader,
+        @JsonProperty("interval_to_ahead") Float intervalToAhead,
+        @JsonProperty("date") LocalDateTime date
 ) {}

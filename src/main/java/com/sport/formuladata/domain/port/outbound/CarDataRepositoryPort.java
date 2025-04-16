@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface CarDataRepositoryPort {
     void saveAll(List<CarData> carData);
+    List<CarData> findAll();
 }

@@ -28,6 +28,13 @@ public class IntervalRepositoryAdapter implements IntervalRepositoryPort {
         jpaRepository.saveAll(entities);
     }
 
+    @Override
+    public List<Interval> findAll() {
+        return jpaRepository.findAll().stream()
+                .map(this::toDomain)
+                .collect(Collectors.toList());
+    }
+
     private IntervalEntity toEntity(Interval interval) {
         IntervalEntity entity = new IntervalEntity();
         entity.setIntervalId(interval.intervalId());
@@ -45,5 +52,22 @@ public class IntervalRepositoryAdapter implements IntervalRepositoryPort {
         entity.setIntervalToAhead(interval.intervalToAhead());
         entity.setDate(interval.date());
         return entity;
+    }
+
+    private Interval toDomain(IntervalEntity entity) {
+        Session session = entity.getSession() != null
+                ? new Session(entity.getSession().getSessionKey(), null, null, null, null, null)
+                : null;
+        Driver driver = entity.getDriver() != null
+                ? new Driver(entity.getDriver().getDriverNumber(), null, null, null, null)
+                : null;
+        return new Interval(
+                entity.getIntervalId(),
+                session,
+                driver,
+                entity.getGapToLeader(),
+                entity.getIntervalToAhead(),
+                entity.getDate()
+        );
     }
 }

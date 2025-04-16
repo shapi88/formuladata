@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface LapRepositoryPort {
     void saveAll(List<Lap> laps);
+    List<Lap> findAll();
 }

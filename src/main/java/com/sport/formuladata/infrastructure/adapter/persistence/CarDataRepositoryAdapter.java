@@ -28,6 +28,13 @@ public class CarDataRepositoryAdapter implements CarDataRepositoryPort {
         jpaRepository.saveAll(entities);
     }
 
+    @Override
+    public List<CarData> findAll() {
+        return jpaRepository.findAll().stream()
+                .map(this::toDomain)
+                .collect(Collectors.toList());
+    }
+
     private CarDataEntity toEntity(CarData carData) {
         CarDataEntity entity = new CarDataEntity();
         entity.setCarDataId(carData.carDataId());
@@ -52,5 +59,29 @@ public class CarDataRepositoryAdapter implements CarDataRepositoryPort {
         entity.setYPosition(carData.yPosition());
         entity.setZPosition(carData.zPosition());
         return entity;
+    }
+
+    private CarData toDomain(CarDataEntity entity) {
+        Session session = entity.getSession() != null
+                ? new Session(entity.getSession().getSessionKey(), null, null, null, null, null)
+                : null;
+        Driver driver = entity.getDriver() != null
+                ? new Driver(entity.getDriver().getDriverNumber(), null, null, null, null)
+                : null;
+        return new CarData(
+                entity.getCarDataId(),
+                session,
+                driver,
+                entity.getDate(),
+                entity.getRpm(),
+                entity.getSpeed(),
+                entity.getGear(),
+                entity.getThrottle(),
+                entity.getBrake(),
+                entity.getDrs(),
+                entity.getXPosition(),
+                entity.getYPosition(),
+                entity.getZPosition()
+        );
     }
 }

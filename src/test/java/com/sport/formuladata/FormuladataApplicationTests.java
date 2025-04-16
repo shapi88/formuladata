@@ -2,11 +2,14 @@ package com.sport.formuladata;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
-@SpringBootTest
+@SpringBootTest(properties = {"spring.main.allow-bean-definition-overriding=true"})
+@ActiveProfiles("test")
 class FormulaDataApplicationTests {
 
-	@Test
-	void contextLoads() {}
-
+    @Test
+    void contextLoads() {
+        // Verifies application context loads
+    }
 }

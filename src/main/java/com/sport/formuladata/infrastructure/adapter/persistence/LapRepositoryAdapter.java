@@ -28,6 +28,13 @@ public class LapRepositoryAdapter implements LapRepositoryPort {
         jpaRepository.saveAll(entities);
     }
 
+    @Override
+    public List<Lap> findAll() {
+        return jpaRepository.findAll().stream()
+                .map(this::toDomain)
+                .collect(Collectors.toList());
+    }
+
     private LapEntity toEntity(Lap lap) {
         LapEntity entity = new LapEntity();
         entity.setLapId(lap.lapId());
@@ -49,5 +56,26 @@ public class LapRepositoryAdapter implements LapRepositoryPort {
         entity.setIsPitOutLap(lap.isPitOutLap());
         entity.setDateStart(lap.dateStart());
         return entity;
+    }
+
+    private Lap toDomain(LapEntity entity) {
+        Session session = entity.getSession() != null
+                ? new Session(entity.getSession().getSessionKey(), null, null, null, null, null)
+                : null;
+        Driver driver = entity.getDriver() != null
+                ? new Driver(entity.getDriver().getDriverNumber(), null, null, null, null)
+                : null;
+        return new Lap(
+                entity.getLapId(),
+                session,
+                driver,
+                entity.getLapNumber(),
+                entity.getLapDuration(),
+                entity.getSector1Duration(),
+                entity.getSector2Duration(),
+                entity.getSector3Duration(),
+                entity.getIsPitOutLap(),
+                entity.getDateStart()
+        );
     }
 }

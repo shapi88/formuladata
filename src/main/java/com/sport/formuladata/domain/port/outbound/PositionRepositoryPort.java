@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface PositionRepositoryPort {
     void saveAll(List<Position> positions);
+    List<Position> findAll();
 }
