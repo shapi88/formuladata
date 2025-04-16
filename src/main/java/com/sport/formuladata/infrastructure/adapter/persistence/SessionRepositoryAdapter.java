@@ -8,10 +8,12 @@ import com.sport.formuladata.infrastructure.adapter.persistence.entity.SessionEn
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Component
 public class SessionRepositoryAdapter implements SessionRepositoryPort {
+    private static final Logger LOGGER = Logger.getLogger(SessionRepositoryAdapter.class.getName());
     private final JpaSessionRepository jpaRepository;
 
     public SessionRepositoryAdapter(JpaSessionRepository jpaRepository) {
@@ -20,6 +22,7 @@ public class SessionRepositoryAdapter implements SessionRepositoryPort {
 
     @Override
     public void saveAll(List<Session> sessions) {
+        LOGGER.info("Saving " + sessions.size() + " session entries");
         List<SessionEntity> entities = sessions.stream()
                 .map(this::toEntity)
                 .collect(Collectors.toList());
@@ -51,9 +54,19 @@ public class SessionRepositoryAdapter implements SessionRepositoryPort {
     private Session toDomain(SessionEntity entity) {
         Meeting meeting = entity.getMeeting() != null
                 ? new Meeting(
-                entity.getMeeting().getMeetingKey(),
-                null, null, null, null, null
-        )
+                        entity.getMeeting().getMeetingKey(),
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                )
                 : null;
         return new Session(
                 entity.getSessionKey(),

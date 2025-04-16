@@ -10,10 +10,12 @@ import com.sport.formuladata.infrastructure.adapter.persistence.entity.SessionEn
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Component
 public class LapRepositoryAdapter implements LapRepositoryPort {
+    private static final Logger LOGGER = Logger.getLogger(LapRepositoryAdapter.class.getName());
     private final JpaLapRepository jpaRepository;
 
     public LapRepositoryAdapter(JpaLapRepository jpaRepository) {
@@ -22,6 +24,7 @@ public class LapRepositoryAdapter implements LapRepositoryPort {
 
     @Override
     public void saveAll(List<Lap> laps) {
+        LOGGER.info("Saving " + laps.size() + " lap entries");
         List<LapEntity> entities = laps.stream()
                 .map(this::toEntity)
                 .collect(Collectors.toList());
@@ -37,7 +40,6 @@ public class LapRepositoryAdapter implements LapRepositoryPort {
 
     private LapEntity toEntity(Lap lap) {
         LapEntity entity = new LapEntity();
-        entity.setLapId(lap.lapId());
         if (lap.session() != null) {
             SessionEntity sessionEntity = new SessionEntity();
             sessionEntity.setSessionKey(lap.session().sessionKey());
@@ -66,10 +68,9 @@ public class LapRepositoryAdapter implements LapRepositoryPort {
                 ? new Driver(entity.getDriver().getDriverNumber(), null, null, null, null)
                 : null;
         return new Lap(
-                entity.getLapId(),
+                entity.getLapNumber(),
                 session,
                 driver,
-                entity.getLapNumber(),
                 entity.getLapDuration(),
                 entity.getSector1Duration(),
                 entity.getSector2Duration(),

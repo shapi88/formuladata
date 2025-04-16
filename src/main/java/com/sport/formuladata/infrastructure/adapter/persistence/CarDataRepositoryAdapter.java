@@ -10,10 +10,12 @@ import com.sport.formuladata.infrastructure.adapter.persistence.entity.SessionEn
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Component
 public class CarDataRepositoryAdapter implements CarDataRepositoryPort {
+    private static final Logger LOGGER = Logger.getLogger(CarDataRepositoryAdapter.class.getName());
     private final JpaCarDataRepository jpaRepository;
 
     public CarDataRepositoryAdapter(JpaCarDataRepository jpaRepository) {
@@ -22,6 +24,7 @@ public class CarDataRepositoryAdapter implements CarDataRepositoryPort {
 
     @Override
     public void saveAll(List<CarData> carData) {
+        LOGGER.info("Saving " + carData.size() + " car data entries");
         List<CarDataEntity> entities = carData.stream()
                 .map(this::toEntity)
                 .collect(Collectors.toList());
@@ -37,7 +40,6 @@ public class CarDataRepositoryAdapter implements CarDataRepositoryPort {
 
     private CarDataEntity toEntity(CarData carData) {
         CarDataEntity entity = new CarDataEntity();
-        entity.setCarDataId(carData.carDataId());
         if (carData.session() != null) {
             SessionEntity sessionEntity = new SessionEntity();
             sessionEntity.setSessionKey(carData.session().sessionKey());
@@ -55,9 +57,6 @@ public class CarDataRepositoryAdapter implements CarDataRepositoryPort {
         entity.setThrottle(carData.throttle());
         entity.setBrake(carData.brake());
         entity.setDrs(carData.drs());
-        entity.setXPosition(carData.xPosition());
-        entity.setYPosition(carData.yPosition());
-        entity.setZPosition(carData.zPosition());
         return entity;
     }
 
@@ -69,7 +68,6 @@ public class CarDataRepositoryAdapter implements CarDataRepositoryPort {
                 ? new Driver(entity.getDriver().getDriverNumber(), null, null, null, null)
                 : null;
         return new CarData(
-                entity.getCarDataId(),
                 session,
                 driver,
                 entity.getDate(),
@@ -78,10 +76,7 @@ public class CarDataRepositoryAdapter implements CarDataRepositoryPort {
                 entity.getGear(),
                 entity.getThrottle(),
                 entity.getBrake(),
-                entity.getDrs(),
-                entity.getXPosition(),
-                entity.getYPosition(),
-                entity.getZPosition()
+                entity.getDrs()
         );
     }
 }

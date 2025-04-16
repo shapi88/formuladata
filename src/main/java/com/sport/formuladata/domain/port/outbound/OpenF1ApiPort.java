@@ -8,8 +8,8 @@ public interface OpenF1ApiPort {
     List<Meeting> fetchMeetings();
     List<Session> fetchSessions();
     List<Driver> fetchDrivers();
-    List<Lap> fetchLaps();
-    List<CarData> fetchCarData();
-    List<Interval> fetchIntervals();
+    List<Lap> fetchLaps(Integer sessionKey, Integer driverNumber);
+    List<CarData> fetchCarData(Integer sessionKey, Integer driverNumber);
+    List<Interval> fetchIntervals(Integer sessionKey);
     List<Position> fetchPositions();
 }

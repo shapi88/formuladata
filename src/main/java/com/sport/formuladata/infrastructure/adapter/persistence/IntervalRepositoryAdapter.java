@@ -10,10 +10,12 @@ import com.sport.formuladata.infrastructure.adapter.persistence.entity.SessionEn
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Component
 public class IntervalRepositoryAdapter implements IntervalRepositoryPort {
+    private static final Logger LOGGER = Logger.getLogger(IntervalRepositoryAdapter.class.getName());
     private final JpaIntervalRepository jpaRepository;
 
     public IntervalRepositoryAdapter(JpaIntervalRepository jpaRepository) {
@@ -22,6 +24,7 @@ public class IntervalRepositoryAdapter implements IntervalRepositoryPort {
 
     @Override
     public void saveAll(List<Interval> intervals) {
+        LOGGER.info("Saving " + intervals.size() + " interval entries");
         List<IntervalEntity> entities = intervals.stream()
                 .map(this::toEntity)
                 .collect(Collectors.toList());
@@ -37,7 +40,6 @@ public class IntervalRepositoryAdapter implements IntervalRepositoryPort {
 
     private IntervalEntity toEntity(Interval interval) {
         IntervalEntity entity = new IntervalEntity();
-        entity.setIntervalId(interval.intervalId());
         if (interval.session() != null) {
             SessionEntity sessionEntity = new SessionEntity();
             sessionEntity.setSessionKey(interval.session().sessionKey());
@@ -62,7 +64,6 @@ public class IntervalRepositoryAdapter implements IntervalRepositoryPort {
                 ? new Driver(entity.getDriver().getDriverNumber(), null, null, null, null)
                 : null;
         return new Interval(
-                entity.getIntervalId(),
                 session,
                 driver,
                 entity.getGapToLeader(),

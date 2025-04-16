@@ -1,17 +1,17 @@
 package com.sport.formuladata.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.time.LocalDateTime;
+
+import java.time.ZonedDateTime;
 
 public record Lap(
-        @JsonProperty("lap_id") Integer lapId,
+        @JsonProperty("lap_number") Integer lapNumber,
         Session session,
         Driver driver,
-        @JsonProperty("lap_number") Integer lapNumber,
-        @JsonProperty("lap_duration") Float lapDuration,
-        @JsonProperty("sector_1_duration") Float sector1Duration,
-        @JsonProperty("sector_2_duration") Float sector2Duration,
-        @JsonProperty("sector_3_duration") Float sector3Duration,
+        @JsonProperty("duration") Float lapDuration,
+        @JsonProperty("sector_1") Float sector1Duration,
+        @JsonProperty("sector_2") Float sector2Duration,
+        @JsonProperty("sector_3") Float sector3Duration,
         @JsonProperty("is_pit_out_lap") Boolean isPitOutLap,
-        @JsonProperty("date_start") LocalDateTime dateStart
+        @JsonProperty("date_start") ZonedDateTime dateStart
 ) {}

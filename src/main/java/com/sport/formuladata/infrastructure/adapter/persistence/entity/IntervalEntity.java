@@ -1,7 +1,7 @@
 package com.sport.formuladata.infrastructure.adapter.persistence.entity;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Entity
 @Table(name = "intervals")
@@ -25,7 +25,8 @@ public class IntervalEntity {
     @Column(name = "interval_to_ahead")
     private Float intervalToAhead;
 
-    private LocalDateTime date;
+    @Column(name = "date")
+    private ZonedDateTime date;
 
     public Integer getIntervalId() {
         return intervalId;
@@ -67,11 +68,11 @@ public class IntervalEntity {
         this.intervalToAhead = intervalToAhead;
     }
 
-    public LocalDateTime getDate() {
+    public ZonedDateTime getDate() {
         return date;
     }
 
-    public void setDate(LocalDateTime date) {
+    public void setDate(ZonedDateTime date) {
         this.date = date;
     }
 }

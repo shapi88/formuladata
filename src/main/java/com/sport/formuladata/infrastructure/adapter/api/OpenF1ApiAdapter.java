@@ -23,6 +23,12 @@ public class OpenF1ApiAdapter implements OpenF1ApiPort {
     @Override
     public List<Meeting> fetchMeetings() {
         try {
+            String rawResponse = openF1RestClient.get()
+                    .uri("/meetings")
+                    .retrieve()
+                    .toEntity(String.class)
+                    .getBody();
+            LOGGER.info("Raw meetings response: " + (rawResponse != null && rawResponse.length() > 500 ? rawResponse.substring(0, 500) + "..." : rawResponse));
             Meeting[] meetings = openF1RestClient.get()
                     .uri("/meetings")
                     .retrieve()
@@ -38,6 +44,12 @@ public class OpenF1ApiAdapter implements OpenF1ApiPort {
     @Override
     public List<Session> fetchSessions() {
         try {
+            String rawResponse = openF1RestClient.get()
+                    .uri("/sessions")
+                    .retrieve()
+                    .toEntity(String.class)
+                    .getBody();
+            LOGGER.info("Raw sessions response: " + (rawResponse != null && rawResponse.length() > 500 ? rawResponse.substring(0, 500) + "..." : rawResponse));
             Session[] sessions = openF1RestClient.get()
                     .uri("/sessions")
                     .retrieve()
@@ -45,7 +57,7 @@ public class OpenF1ApiAdapter implements OpenF1ApiPort {
             LOGGER.info("Fetched " + (sessions != null ? sessions.length : 0) + " sessions");
             return sessions != null ? Arrays.asList(sessions) : Collections.emptyList();
         } catch (RestClientException e) {
-            LOGGER.severe("Failed to fetch sessions: " + e.getMessage());
+            LOGGER.severe("Failed to fetch sessions: " + e.getMessage() + " - Cause: " + (e.getCause() != null ? e.getCause().getMessage() : "Unknown"));
             return Collections.emptyList();
         }
     }
@@ -53,6 +65,12 @@ public class OpenF1ApiAdapter implements OpenF1ApiPort {
     @Override
     public List<Driver> fetchDrivers() {
         try {
+            String rawResponse = openF1RestClient.get()
+                    .uri("/drivers")
+                    .retrieve()
+                    .toEntity(String.class)
+                    .getBody();
+            LOGGER.info("Raw drivers response: " + (rawResponse != null && rawResponse.length() > 500 ? rawResponse.substring(0, 500) + "..." : rawResponse));
             Driver[] drivers = openF1RestClient.get()
                     .uri("/drivers")
                     .retrieve()
@@ -66,13 +84,27 @@ public class OpenF1ApiAdapter implements OpenF1ApiPort {
     }
 
     @Override
-    public List<Lap> fetchLaps() {
+    public List<Lap> fetchLaps(Integer sessionKey, Integer driverNumber) {
         try {
+            String rawResponse = openF1RestClient.get()
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/laps")
+                            .queryParam("session_key", sessionKey)
+                            .queryParam("driver_number", driverNumber)
+                            .build())
+                    .retrieve()
+                    .toEntity(String.class)
+                    .getBody();
+            LOGGER.info("Raw laps response: " + (rawResponse != null && rawResponse.length() > 500 ? rawResponse.substring(0, 500) + "..." : rawResponse));
             Lap[] laps = openF1RestClient.get()
-                    .uri("/laps")
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/laps")
+                            .queryParam("session_key", sessionKey)
+                            .queryParam("driver_number", driverNumber)
+                            .build())
                     .retrieve()
                     .body(Lap[].class);
-            LOGGER.info("Fetched " + (laps != null ? laps.length : 0) + " laps");
+            LOGGER.info("Fetched " + (laps != null ? laps.length : 0) + " laps for session " + sessionKey + ", driver " + driverNumber);
             return laps != null ? Arrays.asList(laps) : Collections.emptyList();
         } catch (RestClientException e) {
             LOGGER.severe("Failed to fetch laps: " + e.getMessage());
@@ -81,13 +113,27 @@ public class OpenF1ApiAdapter implements OpenF1ApiPort {
     }
 
     @Override
-    public List<CarData> fetchCarData() {
+    public List<CarData> fetchCarData(Integer sessionKey, Integer driverNumber) {
         try {
+            String rawResponse = openF1RestClient.get()
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/car_data")
+                            .queryParam("session_key", sessionKey)
+                            .queryParam("driver_number", driverNumber)
+                            .build())
+                    .retrieve()
+                    .toEntity(String.class)
+                    .getBody();
+            LOGGER.info("Raw car data response: " + (rawResponse != null && rawResponse.length() > 500 ? rawResponse.substring(0, 500) + "..." : rawResponse));
             CarData[] carData = openF1RestClient.get()
-                    .uri("/car_data")
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/car_data")
+                            .queryParam("session_key", sessionKey)
+                            .queryParam("driver_number", driverNumber)
+                            .build())
                     .retrieve()
                     .body(CarData[].class);
-            LOGGER.info("Fetched " + (carData != null ? carData.length : 0) + " car data entries");
+            LOGGER.info("Fetched " + (carData != null ? carData.length : 0) + " car data entries for session " + sessionKey + ", driver " + driverNumber);
             return carData != null ? Arrays.asList(carData) : Collections.emptyList();
         } catch (RestClientException e) {
             LOGGER.severe("Failed to fetch car data: " + e.getMessage());
@@ -96,13 +142,25 @@ public class OpenF1ApiAdapter implements OpenF1ApiPort {
     }
 
     @Override
-    public List<Interval> fetchIntervals() {
+    public List<Interval> fetchIntervals(Integer sessionKey) {
         try {
+            String rawResponse = openF1RestClient.get()
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/intervals")
+                            .queryParam("session_key", sessionKey)
+                            .build())
+                    .retrieve()
+                    .toEntity(String.class)
+                    .getBody();
+            LOGGER.info("Raw intervals response: " + (rawResponse != null && rawResponse.length() > 500 ? rawResponse.substring(0, 500) + "..." : rawResponse));
             Interval[] intervals = openF1RestClient.get()
-                    .uri("/intervals")
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/intervals")
+                            .queryParam("session_key", sessionKey)
+                            .build())
                     .retrieve()
                     .body(Interval[].class);
-            LOGGER.info("Fetched " + (intervals != null ? intervals.length : 0) + " intervals");
+            LOGGER.info("Fetched " + (intervals != null ? intervals.length : 0) + " intervals for session " + sessionKey);
             return intervals != null ? Arrays.asList(intervals) : Collections.emptyList();
         } catch (RestClientException e) {
             LOGGER.severe("Failed to fetch intervals: " + e.getMessage());
@@ -112,16 +170,7 @@ public class OpenF1ApiAdapter implements OpenF1ApiPort {
 
     @Override
     public List<Position> fetchPositions() {
-        try {
-            Position[] positions = openF1RestClient.get()
-                    .uri("/position")
-                    .retrieve()
-                    .body(Position[].class);
-            LOGGER.info("Fetched " + (positions != null ? positions.length : 0) + " positions");
-            return positions != null ? Arrays.asList(positions) : Collections.emptyList();
-        } catch (RestClientException e) {
-            LOGGER.severe("Failed to fetch positions: " + e.getMessage());
-            return Collections.emptyList();
-        }
+        LOGGER.warning("Skipping positions fetch due to API timeout issues");
+        return Collections.emptyList();
     }
 }

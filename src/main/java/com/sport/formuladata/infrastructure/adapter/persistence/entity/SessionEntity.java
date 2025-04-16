@@ -1,7 +1,7 @@
 package com.sport.formuladata.infrastructure.adapter.persistence.entity;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Entity
 @Table(name = "sessions")
@@ -21,10 +21,10 @@ public class SessionEntity {
     private String sessionName;
 
     @Column(name = "date_start")
-    private LocalDateTime dateStart;
+    private ZonedDateTime dateStart;
 
     @Column(name = "date_end")
-    private LocalDateTime dateEnd;
+    private ZonedDateTime dateEnd;
 
     public Integer getSessionKey() {
         return sessionKey;
@@ -58,19 +58,19 @@ public class SessionEntity {
         this.sessionName = sessionName;
     }
 
-    public LocalDateTime getDateStart() {
+    public ZonedDateTime getDateStart() {
         return dateStart;
     }
 
-    public void setDateStart(LocalDateTime dateStart) {
+    public void setDateStart(ZonedDateTime dateStart) {
         this.dateStart = dateStart;
     }
 
-    public LocalDateTime getDateEnd() {
+    public ZonedDateTime getDateEnd() {
         return dateEnd;
     }
 
-    public void setDateEnd(LocalDateTime dateEnd) {
+    public void setDateEnd(ZonedDateTime dateEnd) {
         this.dateEnd = dateEnd;
     }
 }

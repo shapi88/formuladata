@@ -35,10 +35,16 @@ public class MeetingRepositoryAdapter implements MeetingRepositoryPort {
         MeetingEntity entity = new MeetingEntity();
         entity.setMeetingKey(meeting.meetingKey());
         entity.setMeetingName(meeting.meetingName());
+        entity.setMeetingOfficialName(meeting.meetingOfficialName());
         entity.setLocation(meeting.location());
+        entity.setCountryKey(meeting.countryKey());
+        entity.setCountryCode(meeting.countryCode());
         entity.setCountryName(meeting.countryName());
+        entity.setCircuitKey(meeting.circuitKey());
         entity.setCircuitShortName(meeting.circuitShortName());
+        entity.setGmtOffset(meeting.gmtOffset());
         entity.setDateStart(meeting.dateStart());
+        entity.setYear(meeting.year());
         return entity;
     }
 
@@ -46,10 +52,16 @@ public class MeetingRepositoryAdapter implements MeetingRepositoryPort {
         return new Meeting(
                 entity.getMeetingKey(),
                 entity.getMeetingName(),
+                entity.getMeetingOfficialName(),
                 entity.getLocation(),
+                entity.getCountryKey(),
+                entity.getCountryCode(),
                 entity.getCountryName(),
+                entity.getCircuitKey(),
                 entity.getCircuitShortName(),
-                entity.getDateStart()
+                entity.getGmtOffset(),
+                entity.getDateStart(),
+                entity.getYear()
         );
     }
 }

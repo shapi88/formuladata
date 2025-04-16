@@ -1,7 +1,7 @@
 package com.sport.formuladata.infrastructure.adapter.persistence.entity;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Entity
 @Table(name = "laps")
@@ -38,7 +38,7 @@ public class LapEntity {
     private Boolean isPitOutLap;
 
     @Column(name = "date_start")
-    private LocalDateTime dateStart;
+    private ZonedDateTime dateStart;
 
     public Integer getLapId() {
         return lapId;
@@ -112,11 +112,11 @@ public class LapEntity {
         this.isPitOutLap = isPitOutLap;
     }
 
-    public LocalDateTime getDateStart() {
+    public ZonedDateTime getDateStart() {
         return dateStart;
     }
 
-    public void setDateStart(LocalDateTime dateStart) {
+    public void setDateStart(ZonedDateTime dateStart) {
         this.dateStart = dateStart;
     }
 }

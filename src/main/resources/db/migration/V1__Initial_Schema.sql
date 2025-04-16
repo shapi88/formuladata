@@ -2,10 +2,16 @@
 CREATE TABLE meetings (
     meeting_key INTEGER PRIMARY KEY,
     meeting_name VARCHAR(255),
+    meeting_official_name VARCHAR(255),
     location VARCHAR(255),
+    country_key INTEGER,
+    country_code VARCHAR(10),
     country_name VARCHAR(255),
+    circuit_key INTEGER,
     circuit_short_name VARCHAR(255),
-    date_start TIMESTAMP
+    gmt_offset VARCHAR(10),
+    date_start TIMESTAMP,
+    year INTEGER
 );
 
 -- Sessions table
@@ -56,9 +62,6 @@ CREATE TABLE car_data (
     throttle FLOAT,
     brake FLOAT,
     drs BOOLEAN,
-    x_position FLOAT,
-    y_position FLOAT,
-    z_position FLOAT,
     FOREIGN KEY (session_key) REFERENCES sessions(session_key),
     FOREIGN KEY (driver_number) REFERENCES drivers(driver_number)
 );

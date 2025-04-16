@@ -1,7 +1,7 @@
 package com.sport.formuladata.infrastructure.adapter.persistence.entity;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Entity
 @Table(name = "car_data")
@@ -19,7 +19,8 @@ public class CarDataEntity {
     @JoinColumn(name = "driver_number")
     private DriverEntity driver;
 
-    private LocalDateTime date;
+    @Column(name = "date")
+    private ZonedDateTime date;
 
     private Integer rpm;
 
@@ -32,15 +33,6 @@ public class CarDataEntity {
     private Float brake;
 
     private Boolean drs;
-
-    @Column(name = "x_position")
-    private Float xPosition;
-
-    @Column(name = "y_position")
-    private Float yPosition;
-
-    @Column(name = "z_position")
-    private Float zPosition;
 
     public Integer getCarDataId() {
         return carDataId;
@@ -66,11 +58,11 @@ public class CarDataEntity {
         this.driver = driver;
     }
 
-    public LocalDateTime getDate() {
+    public ZonedDateTime getDate() {
         return date;
     }
 
-    public void setDate(LocalDateTime date) {
+    public void setDate(ZonedDateTime date) {
         this.date = date;
     }
 
@@ -120,29 +112,5 @@ public class CarDataEntity {
 
     public void setDrs(Boolean drs) {
         this.drs = drs;
-    }
-
-    public Float getXPosition() {
-        return xPosition;
-    }
-
-    public void setXPosition(Float xPosition) {
-        this.xPosition = xPosition;
-    }
-
-    public Float getYPosition() {
-        return yPosition;
-    }
-
-    public void setYPosition(Float yPosition) {
-        this.yPosition = yPosition;
-    }
-
-    public Float getZPosition() {
-        return zPosition;
-    }
-
-    public void setZPosition(Float zPosition) {
-        this.zPosition = zPosition;
     }
 }
