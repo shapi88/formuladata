@@ -122,8 +122,20 @@ public class OpenF1ApiAdapter implements OpenF1ApiPort {
     }
 
     @Override
-    public List<Position> fetchPositions() {
-        LOGGER.warning("Skipping positions fetch due to API timeout issues");
-        return Collections.emptyList();
+    public List<Position> fetchPositions(Integer sessionKey) {
+        try {
+            Position[] positions = openF1RestClient.get()
+                    .uri(uriBuilder -> uriBuilder
+                            .path("/position")
+                            .queryParam("session_key", sessionKey)
+                            .build())
+                    .retrieve()
+                    .body(Position[].class);
+            LOGGER.info("Fetched " + (positions != null ? positions.length : 0) + " positions for session " + sessionKey);
+            return positions != null ? Arrays.asList(positions) : Collections.emptyList();
+        } catch (RestClientException e) {
+            LOGGER.severe("Failed to fetch positions: " + e.getMessage());
+            return Collections.emptyList();
+        }
     }
 }

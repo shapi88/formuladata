@@ -1,12 +1,8 @@
 package com.sport.formuladata.infrastructure.adapter.persistence;
 
-import com.sport.formuladata.domain.entity.Driver;
 import com.sport.formuladata.domain.entity.Interval;
-import com.sport.formuladata.domain.entity.Session;
 import com.sport.formuladata.domain.port.outbound.IntervalRepositoryPort;
-import com.sport.formuladata.infrastructure.adapter.persistence.entity.DriverEntity;
 import com.sport.formuladata.infrastructure.adapter.persistence.entity.IntervalEntity;
-import com.sport.formuladata.infrastructure.adapter.persistence.entity.SessionEntity;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -56,7 +52,7 @@ public class IntervalRepositoryAdapter implements IntervalRepositoryPort {
             jpaSessionRepository.findById(interval.sessionKey())
                     .ifPresentOrElse(
                         entity::setSession,
-                        () -> LOGGER.warning("No MeetingEntity found for meeting_key: " + interval.meetingKey())
+                        () -> LOGGER.warning("No Session Entity found for session_key: " + interval.sessionKey())
                     );
         }
         if (interval.meetingKey() != null) {
@@ -70,7 +66,7 @@ public class IntervalRepositoryAdapter implements IntervalRepositoryPort {
             jpaDriverRepository.findByDriverNumber(interval.driverNumber())
                     .ifPresentOrElse(
                         entity::setDriver,
-                        () -> LOGGER.warning("No MeetingEntity found for meeting_key: " + interval.meetingKey())
+                        () -> LOGGER.warning("No DriverEntity found for driver_number: " + interval.driverNumber())
                     );
         }
         entity.setGapToLeader(interval.gapToLeader());

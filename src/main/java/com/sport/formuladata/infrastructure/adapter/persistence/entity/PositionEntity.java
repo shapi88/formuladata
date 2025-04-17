@@ -1,7 +1,7 @@
 package com.sport.formuladata.infrastructure.adapter.persistence.entity;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 @Entity
 @Table(name = "positions")
@@ -16,12 +16,16 @@ public class PositionEntity {
     private SessionEntity session;
 
     @ManyToOne
+    @JoinColumn(name = "meeting_key")
+    private MeetingEntity meeting;
+
+    @ManyToOne
     @JoinColumn(name = "driver_number")
     private DriverEntity driver;
 
     private Integer position;
 
-    private LocalDateTime date;
+    private ZonedDateTime date;
 
     public Integer getPositionId() {
         return positionId;
@@ -47,6 +51,14 @@ public class PositionEntity {
         this.driver = driver;
     }
 
+    public MeetingEntity getMeeting() {
+        return meeting;
+    }
+
+    public void setMeeting(MeetingEntity meeting) {
+        this.meeting = meeting;
+    }
+
     public Integer getPosition() {
         return position;
     }
@@ -55,11 +67,11 @@ public class PositionEntity {
         this.position = position;
     }
 
-    public LocalDateTime getDate() {
+    public ZonedDateTime getDate() {
         return date;
     }
 
-    public void setDate(LocalDateTime date) {
+    public void setDate(ZonedDateTime date) {
         this.date = date;
     }
 }

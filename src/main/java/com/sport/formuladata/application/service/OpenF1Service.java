@@ -42,10 +42,11 @@ public class OpenF1Service implements FetchOpenF1DataUseCase, GetMeetingsUseCase
 
     @Override
     public void fetchAndStoreAllData() {
-        this.fetchAndStoreMeetings();
-        this.fetchAndStoreDrivers();
-        this.fetchAndStoreSessions();
-        this.fetchAndStoreIntervals();
+        //this.fetchAndStoreMeetings();
+        //this.fetchAndStoreDrivers();
+        //this.fetchAndStoreSessions();
+        //this.fetchAndStoreIntervals();
+        //this.fetchAndStorePositions();
     }
 
     @Override
@@ -139,6 +140,39 @@ public class OpenF1Service implements FetchOpenF1DataUseCase, GetMeetingsUseCase
 }
 
     @Override
+    public void fetchAndStorePositions() {
+        List<Session> existingSessions = sessionRepositoryPort.findAll();
+        List<Driver> existingDrivers = driverRepositoryPort.findAll();
+        for (Session existingSession : existingSessions) {
+            Integer sessionKey = existingSession.sessionKey();
+            List<Position> existingPositions = positionRepositoryPort.findAll();
+            List<Position> apiPositions = openF1ApiPort.fetchPositions(sessionKey);
+            //for (Driver existingDriver : existingDrivers) {
+                //Integer driverNumber = existingDriver.driverNumber();
+                List<Position> newPositions = apiPositions.stream().filter(p -> existingPositions.stream().noneMatch(ep ->
+                                ep.sessionKey() != null && p.sessionKey() != null &&
+                                ep.driverNumber() != null && p.driverNumber() != null &&
+                                ep.sessionKey().equals(p.sessionKey()) &&
+                                ep.driverNumber().equals(p.driverNumber()) &&
+                                ep.date().equals(p.date())))
+                        .map(p -> {
+                            return new Position(
+                                    p.meetingKey(),
+                                    p.sessionKey(),
+                                    p.driverNumber(),
+                                    p.position(),
+                                    p.date()
+                            );
+                        })
+                        .toList();
+                LOGGER.info("Processing " + newPositions.size() + " new positions");
+                positionRepositoryPort.saveAll(newPositions);
+                continue;
+            //}
+        }
+    }
+
+    @Override
     public void fetch() {
         /*
        // Fetch Laps, CarData, Intervals for each new session and driver
@@ -198,72 +232,8 @@ public class OpenF1Service implements FetchOpenF1DataUseCase, GetMeetingsUseCase
             carDataRepositoryPort.saveAll(newCarData);
         }
 
-        // Intervals
-        List<Interval> existingIntervals = intervalRepositoryPort.findAll();
-        List<Interval> apiIntervals = openF1ApiPort.fetchIntervals(sessionKey);
-        List<Interval> newIntervals = apiIntervals.stream()
-                .filter(i -> existingIntervals.stream().noneMatch(ei ->
-                        ei.session() != null && i.session() != null &&
-                        ei.driver() != null && i.driver() != null &&
-                        ei.session().sessionKey().equals(i.session().sessionKey()) &&
-                        ei.driver().driverNumber().equals(i.driver().driverNumber()) &&
-                        ei.date().equals(i.date())))
-                .map(i -> {
-                    Driver intervalDriver = newDrivers.stream()
-                            .filter(d -> d.driverNumber().equals(i.driver().driverNumber()))
-                            .findFirst()
-                            .orElseGet(() -> existingDrivers.stream()
-                                    .filter(d -> d.driverNumber().equals(i.driver().driverNumber()))
-                                    .findFirst()
-                                    .orElse(null));
-                    return new Interval(
-                            session,
-                            intervalDriver,
-                            i.gapToLeader(),
-                            i.intervalToAhead(),
-                            i.date()
-                    );
-                })
-                .toList();
-        LOGGER.info("Processing " + newIntervals.size() + " new intervals for session " + sessionKey);
-        intervalRepositoryPort.saveAll(newIntervals);
-    }
-
     // Positions
-    List<Position> existingPositions = positionRepositoryPort.findAll();
-    List<Position> newPositions = openF1ApiPort.fetchPositions().stream()
-            .filter(p -> existingPositions.stream().noneMatch(ep ->
-                    ep.session() != null && p.session() != null &&
-                    ep.driver() != null && p.driver() != null &&
-                    ep.session().sessionKey().equals(p.session().sessionKey()) &&
-                    ep.driver().driverNumber().equals(p.driver().driverNumber()) &&
-                    ep.date().equals(p.date())))
-            .map(p -> {
-                Session session = newSessions.stream()
-                        .filter(s -> s.sessionKey().equals(p.session() != null ? p.session().sessionKey() : null))
-                        .findFirst()
-                        .orElseGet(() -> existingSessions.stream()
-                                .filter(s -> s.sessionKey().equals(p.session() != null ? p.session().sessionKey() : null))
-                                .findFirst()
-                                .orElse(null));
-                Driver driver = newDrivers.stream()
-                        .filter(d -> d.driverNumber().equals(p.driver() != null ? p.driver().driverNumber() : null))
-                        .findFirst()
-                        .orElseGet(() -> existingDrivers.stream()
-                                .filter(d -> d.driverNumber().equals(p.driver() != null ? p.driver().driverNumber() : null))
-                                .findFirst()
-                                .orElse(null));
-                return new Position(
-                        p.positionId(),
-                        session,
-                        driver,
-                        p.position(),
-                        p.date()
-                );
-            })
-            .toList();
-    LOGGER.info("Processing " + newPositions.size() + " new positions");
-    positionRepositoryPort.saveAll(newPositions);*/
+*/
         throw new UnsupportedOperationException("Unimplemented method 'getAllPositions'");
     }
 

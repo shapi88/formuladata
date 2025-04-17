@@ -1,23 +1,34 @@
 package com.sport.formuladata.infrastructure.adapter.persistence;
 
-import com.sport.formuladata.domain.entity.Driver;
 import com.sport.formuladata.domain.entity.Position;
-import com.sport.formuladata.domain.entity.Session;
 import com.sport.formuladata.domain.port.outbound.PositionRepositoryPort;
-import com.sport.formuladata.infrastructure.adapter.persistence.entity.DriverEntity;
 import com.sport.formuladata.infrastructure.adapter.persistence.entity.PositionEntity;
-import com.sport.formuladata.infrastructure.adapter.persistence.entity.SessionEntity;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Component
 public class PositionRepositoryAdapter implements PositionRepositoryPort {
-    private final JpaPositionRepository jpaRepository;
 
-    public PositionRepositoryAdapter(JpaPositionRepository jpaRepository) {
+    private final JpaMeetingRepository jpaMeetingRepository;
+    
+    private static final Logger LOGGER = Logger.getLogger(PositionRepositoryPort.class.getName());
+    private final JpaPositionRepository jpaRepository;
+    private final JpaSessionRepository jpaSessionRepository;
+    private final JpaDriverRepository jpaDriverRepository;
+
+    public PositionRepositoryAdapter(
+            JpaPositionRepository jpaRepository,
+            JpaSessionRepository jpaSessionRepository,
+            JpaDriverRepository jpaDriverRepository,
+            JpaMeetingRepository jpaMeetingRepository
+        ) {
         this.jpaRepository = jpaRepository;
+        this.jpaSessionRepository = jpaSessionRepository;
+        this.jpaDriverRepository = jpaDriverRepository;
+        this.jpaMeetingRepository = jpaMeetingRepository;
     }
 
     @Override
@@ -37,16 +48,26 @@ public class PositionRepositoryAdapter implements PositionRepositoryPort {
 
     private PositionEntity toEntity(Position position) {
         PositionEntity entity = new PositionEntity();
-        entity.setPositionId(position.positionId());
-        if (position.session() != null) {
-            SessionEntity sessionEntity = new SessionEntity();
-            sessionEntity.setSessionKey(position.session().sessionKey());
-            entity.setSession(sessionEntity);
+        if (position.sessionKey() != null) {
+            jpaSessionRepository.findById(position.sessionKey())
+                    .ifPresentOrElse(
+                        entity::setSession,
+                        () -> LOGGER.warning("No SessionEntity found for session_key: " + position.sessionKey())
+                    );
         }
-        if (position.driver() != null) {
-            DriverEntity driverEntity = new DriverEntity();
-            driverEntity.setDriverNumber(position.driver().driverNumber());
-            entity.setDriver(driverEntity);
+        if (position.driverNumber() != null) {
+            jpaDriverRepository.findByDriverNumber(position.driverNumber())
+                    .ifPresentOrElse(
+                        entity::setDriver,
+                        () -> LOGGER.warning("No DriverEntity found for driver_number: " + position.driverNumber())
+                    );
+        }
+        if (position.meetingKey() != null) {
+            jpaMeetingRepository.findById(position.meetingKey())
+                    .ifPresentOrElse(
+                        entity::setMeeting,
+                        () -> LOGGER.warning("No DriverEntity found for driver_number: " + position.meetingKey())
+                    );
         }
         entity.setPosition(position.position());
         entity.setDate(position.date());
@@ -54,16 +75,10 @@ public class PositionRepositoryAdapter implements PositionRepositoryPort {
     }
 
     private Position toDomain(PositionEntity entity) {
-        Session session = entity.getSession() != null
-                ? new Session(entity.getSession().getSessionKey(), null, null, null, null, null)
-                : null;
-        Driver driver = entity.getDriver() != null
-                ? new Driver(entity.getDriver().getDriverNumber(), null, null, null, null)
-                : null;
         return new Position(
-                entity.getPositionId(),
-                session,
-                driver,
+                entity.getSession().getSessionKey(),
+                entity.getSession().getSessionKey(),
+                entity.getDriver().getDriverNumber(),
                 entity.getPosition(),
                 entity.getDate()
         );
