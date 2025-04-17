@@ -19,6 +19,10 @@ public class IntervalEntity {
     @JoinColumn(name = "driver_number")
     private DriverEntity driver;
 
+    @ManyToOne
+    @JoinColumn(name = "meeting_key")
+    private MeetingEntity meeting;
+
     @Column(name = "gap_to_leader")
     private Float gapToLeader;
 
@@ -42,6 +46,14 @@ public class IntervalEntity {
 
     public void setSession(SessionEntity session) {
         this.session = session;
+    }
+
+    public MeetingEntity getMeeting() {
+        return meeting;
+    }
+
+    public void setMeeting(MeetingEntity meeting) {
+        this.meeting = meeting;
     }
 
     public DriverEntity getDriver() {

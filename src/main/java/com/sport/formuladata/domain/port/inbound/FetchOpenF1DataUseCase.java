@@ -5,5 +5,6 @@ public interface FetchOpenF1DataUseCase {
     void fetchAndStoreMeetings();
     void fetchAndStoreSessions();
     void fetchAndStoreDrivers();
+    void fetchAndStoreIntervals();
     void fetch();
 }

@@ -45,6 +45,7 @@ public class OpenF1Service implements FetchOpenF1DataUseCase, GetMeetingsUseCase
         this.fetchAndStoreMeetings();
         this.fetchAndStoreDrivers();
         this.fetchAndStoreSessions();
+        this.fetchAndStoreIntervals();
     }
 
     @Override
@@ -74,9 +75,7 @@ public class OpenF1Service implements FetchOpenF1DataUseCase, GetMeetingsUseCase
     }
 
     @Override
-    public void fetchAndStoreSessions() {
-        
-        // Sessions
+    public void fetchAndStoreSessions() {        
         List<Session> existingSessions = sessionRepositoryPort.findAll();
         List<Session> apiSessions = openF1ApiPort.fetchSessions();
         List<Session> newSessions = apiSessions.stream()
@@ -94,6 +93,38 @@ public class OpenF1Service implements FetchOpenF1DataUseCase, GetMeetingsUseCase
                 .toList();
         LOGGER.info("Processing " + newSessions.size() + " new sessions");
         sessionRepositoryPort.saveAll(newSessions);
+    }
+
+    @Override
+    public void fetchAndStoreIntervals() {
+        List<Session> existingSessions = sessionRepositoryPort.findAll();
+        List<Interval> existingIntervals = intervalRepositoryPort.findAll();
+        for (Session session : existingSessions) {
+            if (session != null) {
+                
+                List<Interval> apiIntervals = openF1ApiPort.fetchIntervals(session.sessionKey());
+                List<Interval> newIntervals = apiIntervals.stream()
+                    .filter(i -> existingIntervals.stream().noneMatch(ei ->
+                                ei.sessionKey() != null && i.sessionKey() != null &&
+                                ei.driverNumber() != null && i.driverNumber() != null &&
+                                ei.sessionKey().equals(i.sessionKey()) &&
+                                ei.driverNumber().equals(i.driverNumber()) &&
+                                ei.date().equals(i.date())))
+                    .map(i -> {
+                        return new Interval(
+                            i.sessionKey(),
+                            i.driverNumber(),
+                            i.meetingKey(),
+                            i.gapToLeader(),
+                            i.intervalToAhead(),
+                            i.date()
+                            );
+                        })
+                    .toList();
+                LOGGER.info("Processing " + newIntervals.size() + " new intervals for session " + session.sessionKey());
+                intervalRepositoryPort.saveAll(newIntervals);
+            }
+        }
     }
 
     @Override

@@ -71,6 +71,7 @@ CREATE TABLE intervals (
     interval_id SERIAL PRIMARY KEY,
     session_key INTEGER,
     driver_number INTEGER,
+    meeting_key INTEGER,
     gap_to_leader FLOAT,
     interval_to_ahead FLOAT,
     date TIMESTAMP,

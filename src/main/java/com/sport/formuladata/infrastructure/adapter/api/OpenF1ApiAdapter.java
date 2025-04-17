@@ -23,12 +23,6 @@ public class OpenF1ApiAdapter implements OpenF1ApiPort {
     @Override
     public List<Meeting> fetchMeetings() {
         try {
-            String rawResponse = openF1RestClient.get()
-                    .uri("/meetings")
-                    .retrieve()
-                    .toEntity(String.class)
-                    .getBody();
-            LOGGER.info("Raw meetings response: " + (rawResponse != null && rawResponse.length() > 500 ? rawResponse.substring(0, 500) + "..." : rawResponse));
             Meeting[] meetings = openF1RestClient.get()
                     .uri("/meetings")
                     .retrieve()
@@ -44,12 +38,6 @@ public class OpenF1ApiAdapter implements OpenF1ApiPort {
     @Override
     public List<Session> fetchSessions() {
         try {
-            String rawResponse = openF1RestClient.get()
-                    .uri("/sessions")
-                    .retrieve()
-                    .toEntity(String.class)
-                    .getBody();
-            LOGGER.info("Raw sessions response: " + (rawResponse != null && rawResponse.length() > 500 ? rawResponse.substring(0, 500) + "..." : rawResponse));
             Session[] sessions = openF1RestClient.get()
                     .uri("/sessions")
                     .retrieve()
@@ -65,12 +53,6 @@ public class OpenF1ApiAdapter implements OpenF1ApiPort {
     @Override
     public List<Driver> fetchDrivers() {
         try {
-            String rawResponse = openF1RestClient.get()
-                    .uri("/drivers")
-                    .retrieve()
-                    .toEntity(String.class)
-                    .getBody();
-            LOGGER.info("Raw drivers response: " + (rawResponse != null && rawResponse.length() > 500 ? rawResponse.substring(0, 500) + "..." : rawResponse));
             Driver[] drivers = openF1RestClient.get()
                     .uri("/drivers")
                     .retrieve()
@@ -86,16 +68,6 @@ public class OpenF1ApiAdapter implements OpenF1ApiPort {
     @Override
     public List<Lap> fetchLaps(Integer sessionKey, Integer driverNumber) {
         try {
-            String rawResponse = openF1RestClient.get()
-                    .uri(uriBuilder -> uriBuilder
-                            .path("/laps")
-                            .queryParam("session_key", sessionKey)
-                            .queryParam("driver_number", driverNumber)
-                            .build())
-                    .retrieve()
-                    .toEntity(String.class)
-                    .getBody();
-            LOGGER.info("Raw laps response: " + (rawResponse != null && rawResponse.length() > 500 ? rawResponse.substring(0, 500) + "..." : rawResponse));
             Lap[] laps = openF1RestClient.get()
                     .uri(uriBuilder -> uriBuilder
                             .path("/laps")
@@ -115,16 +87,6 @@ public class OpenF1ApiAdapter implements OpenF1ApiPort {
     @Override
     public List<CarData> fetchCarData(Integer sessionKey, Integer driverNumber) {
         try {
-            String rawResponse = openF1RestClient.get()
-                    .uri(uriBuilder -> uriBuilder
-                            .path("/car_data")
-                            .queryParam("session_key", sessionKey)
-                            .queryParam("driver_number", driverNumber)
-                            .build())
-                    .retrieve()
-                    .toEntity(String.class)
-                    .getBody();
-            LOGGER.info("Raw car data response: " + (rawResponse != null && rawResponse.length() > 500 ? rawResponse.substring(0, 500) + "..." : rawResponse));
             CarData[] carData = openF1RestClient.get()
                     .uri(uriBuilder -> uriBuilder
                             .path("/car_data")
@@ -144,15 +106,6 @@ public class OpenF1ApiAdapter implements OpenF1ApiPort {
     @Override
     public List<Interval> fetchIntervals(Integer sessionKey) {
         try {
-            String rawResponse = openF1RestClient.get()
-                    .uri(uriBuilder -> uriBuilder
-                            .path("/intervals")
-                            .queryParam("session_key", sessionKey)
-                            .build())
-                    .retrieve()
-                    .toEntity(String.class)
-                    .getBody();
-            LOGGER.info("Raw intervals response: " + (rawResponse != null && rawResponse.length() > 500 ? rawResponse.substring(0, 500) + "..." : rawResponse));
             Interval[] intervals = openF1RestClient.get()
                     .uri(uriBuilder -> uriBuilder
                             .path("/intervals")

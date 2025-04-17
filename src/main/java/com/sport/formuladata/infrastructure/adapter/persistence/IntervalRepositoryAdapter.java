@@ -15,11 +15,23 @@ import java.util.stream.Collectors;
 
 @Component
 public class IntervalRepositoryAdapter implements IntervalRepositoryPort {
-    private static final Logger LOGGER = Logger.getLogger(IntervalRepositoryAdapter.class.getName());
-    private final JpaIntervalRepository jpaRepository;
 
-    public IntervalRepositoryAdapter(JpaIntervalRepository jpaRepository) {
+    private static final Logger LOGGER = Logger.getLogger(IntervalRepositoryAdapter.class.getName());
+    private final JpaSessionRepository jpaSessionRepository;
+    private final JpaIntervalRepository jpaRepository;
+    private final JpaMeetingRepository jpaMeetingRepository;
+    private final JpaDriverRepository jpaDriverRepository;
+
+    public IntervalRepositoryAdapter(
+            JpaIntervalRepository jpaRepository,
+            JpaMeetingRepository jpaMeetingRepository,
+            JpaDriverRepository jpaDriverRepository,
+            JpaSessionRepository jpaSessionRepository
+        ) {
         this.jpaRepository = jpaRepository;
+        this.jpaMeetingRepository = jpaMeetingRepository;
+        this.jpaDriverRepository = jpaDriverRepository;
+        this.jpaSessionRepository = jpaSessionRepository;
     }
 
     @Override
@@ -40,15 +52,26 @@ public class IntervalRepositoryAdapter implements IntervalRepositoryPort {
 
     private IntervalEntity toEntity(Interval interval) {
         IntervalEntity entity = new IntervalEntity();
-        if (interval.session() != null) {
-            SessionEntity sessionEntity = new SessionEntity();
-            sessionEntity.setSessionKey(interval.session().sessionKey());
-            entity.setSession(sessionEntity);
+        if (interval.sessionKey() != null) {
+            jpaSessionRepository.findById(interval.sessionKey())
+                    .ifPresentOrElse(
+                        entity::setSession,
+                        () -> LOGGER.warning("No MeetingEntity found for meeting_key: " + interval.meetingKey())
+                    );
         }
-        if (interval.driver() != null) {
-            DriverEntity driverEntity = new DriverEntity();
-            driverEntity.setDriverNumber(interval.driver().driverNumber());
-            entity.setDriver(driverEntity);
+        if (interval.meetingKey() != null) {
+            jpaMeetingRepository.findById(interval.meetingKey())
+                    .ifPresentOrElse(
+                            entity::setMeeting,
+                            () -> LOGGER.warning("No MeetingEntity found for meeting_key: " + interval.meetingKey())
+                    );
+        }
+        if (interval.driverNumber() != null) {
+            jpaDriverRepository.findByDriverNumber(interval.driverNumber())
+                    .ifPresentOrElse(
+                        entity::setDriver,
+                        () -> LOGGER.warning("No MeetingEntity found for meeting_key: " + interval.meetingKey())
+                    );
         }
         entity.setGapToLeader(interval.gapToLeader());
         entity.setIntervalToAhead(interval.intervalToAhead());
@@ -57,15 +80,10 @@ public class IntervalRepositoryAdapter implements IntervalRepositoryPort {
     }
 
     private Interval toDomain(IntervalEntity entity) {
-        Session session = entity.getSession() != null
-                ? new Session(entity.getSession().getSessionKey(), null, null, null, null, null)
-                : null;
-        Driver driver = entity.getDriver() != null
-                ? new Driver(entity.getDriver().getDriverNumber(), null, null, null, null)
-                : null;
         return new Interval(
-                session,
-                driver,
+                entity.getSession().getSessionKey(),
+                entity.getDriver().getDriverNumber(),
+                entity.getMeeting().getMeetingKey(),
                 entity.getGapToLeader(),
                 entity.getIntervalToAhead(),
                 entity.getDate()

@@ -1,9 +1,7 @@
 package com.sport.formuladata.infrastructure.adapter.persistence;
 
-import com.sport.formuladata.domain.entity.Meeting;
 import com.sport.formuladata.domain.entity.Session;
 import com.sport.formuladata.domain.port.outbound.SessionRepositoryPort;
-//import com.sport.formuladata.infrastructure.adapter.persistence.entity.MeetingEntity;
 import com.sport.formuladata.infrastructure.adapter.persistence.entity.SessionEntity;
 import org.springframework.stereotype.Component;
 
@@ -56,22 +54,6 @@ public class SessionRepositoryAdapter implements SessionRepositoryPort {
     }
 
     private Session toDomain(SessionEntity entity) {
-        Meeting meeting = entity.getMeeting() != null
-                ? new Meeting(
-                        entity.getMeeting().getMeetingKey(),
-                        null,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null,
-                        null
-                )
-                : null;
         return new Session(
                 entity.getSessionKey(),
                 entity.getMeeting().getMeetingKey(),
