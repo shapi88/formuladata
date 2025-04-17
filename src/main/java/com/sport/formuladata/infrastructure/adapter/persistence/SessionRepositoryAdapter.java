@@ -3,7 +3,7 @@ package com.sport.formuladata.infrastructure.adapter.persistence;
 import com.sport.formuladata.domain.entity.Meeting;
 import com.sport.formuladata.domain.entity.Session;
 import com.sport.formuladata.domain.port.outbound.SessionRepositoryPort;
-import com.sport.formuladata.infrastructure.adapter.persistence.entity.MeetingEntity;
+//import com.sport.formuladata.infrastructure.adapter.persistence.entity.MeetingEntity;
 import com.sport.formuladata.infrastructure.adapter.persistence.entity.SessionEntity;
 import org.springframework.stereotype.Component;
 
@@ -15,9 +15,11 @@ import java.util.stream.Collectors;
 public class SessionRepositoryAdapter implements SessionRepositoryPort {
     private static final Logger LOGGER = Logger.getLogger(SessionRepositoryAdapter.class.getName());
     private final JpaSessionRepository jpaRepository;
+    private final JpaMeetingRepository jpaMeetingRepository;
 
-    public SessionRepositoryAdapter(JpaSessionRepository jpaRepository) {
+    public SessionRepositoryAdapter(JpaSessionRepository jpaRepository, JpaMeetingRepository jpaMeetingRepository) {
         this.jpaRepository = jpaRepository;
+        this.jpaMeetingRepository = jpaMeetingRepository;
     }
 
     @Override
@@ -39,10 +41,12 @@ public class SessionRepositoryAdapter implements SessionRepositoryPort {
     private SessionEntity toEntity(Session session) {
         SessionEntity entity = new SessionEntity();
         entity.setSessionKey(session.sessionKey());
-        if (session.meeting() != null) {
-            MeetingEntity meetingEntity = new MeetingEntity();
-            meetingEntity.setMeetingKey(session.meeting().meetingKey());
-            entity.setMeeting(meetingEntity);
+        if (session.meetingKey() != null) {
+            jpaMeetingRepository.findById(session.meetingKey())
+                    .ifPresentOrElse(
+                            entity::setMeeting,
+                            () -> LOGGER.warning("No MeetingEntity found for meeting_key: " + session.meetingKey())
+                    );
         }
         entity.setSessionType(session.sessionType());
         entity.setSessionName(session.sessionName());
@@ -70,7 +74,7 @@ public class SessionRepositoryAdapter implements SessionRepositoryPort {
                 : null;
         return new Session(
                 entity.getSessionKey(),
-                meeting,
+                entity.getMeeting().getMeetingKey(),
                 entity.getSessionType(),
                 entity.getSessionName(),
                 entity.getDateStart(),

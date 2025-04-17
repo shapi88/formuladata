@@ -77,22 +77,14 @@ public class OpenF1Service implements FetchOpenF1DataUseCase, GetMeetingsUseCase
     public void fetchAndStoreSessions() {
         
         // Sessions
-        List<Meeting> existingMeetings = meetingRepositoryPort.findAll();
         List<Session> existingSessions = sessionRepositoryPort.findAll();
         List<Session> apiSessions = openF1ApiPort.fetchSessions();
         List<Session> newSessions = apiSessions.stream()
                 .filter(s -> existingSessions.stream().noneMatch(es -> es.sessionKey().equals(s.sessionKey())))
                 .map(s -> {
-                    Meeting meeting = existingMeetings.stream()
-                            .filter(m -> m.meetingKey().equals(s.meeting() != null ? s.meeting().meetingKey() : null))
-                            .findFirst()
-                            .orElseGet(() -> existingMeetings.stream()
-                                    .filter(m -> m.meetingKey().equals(s.meeting() != null ? s.meeting().meetingKey() : null))
-                                    .findFirst()
-                                    .orElse(null));
                     return new Session(
                             s.sessionKey(),
-                            meeting,
+                            s.meetingKey(),
                             s.sessionType(),
                             s.sessionName(),
                             s.dateStart(),

@@ -6,7 +6,8 @@ import java.time.ZonedDateTime;
 
 public record Session(
         @JsonProperty("session_key") Integer sessionKey,
-        Meeting meeting,
+        @JsonProperty("meeting_key") Integer meetingKey,
+        //Meeting meeting,
         @JsonProperty("session_type") String sessionType,
         @JsonProperty("session_name") String sessionName,
         @JsonProperty("date_start") ZonedDateTime dateStart,
