@@ -12,7 +12,7 @@ public interface OpenF1ApiPort {
     
     List<Driver> fetchDrivers();
     
-    List<Lap> fetchLaps(Integer sessionKey, Integer driverNumber);
+    List<Lap> fetchLaps(Integer sessionKey);
     
     List<CarData> fetchCarData(Integer sessionKey, Integer driverNumber);
     

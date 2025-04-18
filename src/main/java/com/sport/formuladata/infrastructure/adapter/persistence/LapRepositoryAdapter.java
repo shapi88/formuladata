@@ -1,12 +1,8 @@
 package com.sport.formuladata.infrastructure.adapter.persistence;
 
-import com.sport.formuladata.domain.entity.Driver;
 import com.sport.formuladata.domain.entity.Lap;
-import com.sport.formuladata.domain.entity.Session;
 import com.sport.formuladata.domain.port.outbound.LapRepositoryPort;
-import com.sport.formuladata.infrastructure.adapter.persistence.entity.DriverEntity;
 import com.sport.formuladata.infrastructure.adapter.persistence.entity.LapEntity;
-import com.sport.formuladata.infrastructure.adapter.persistence.entity.SessionEntity;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -15,11 +11,20 @@ import java.util.stream.Collectors;
 
 @Component
 public class LapRepositoryAdapter implements LapRepositoryPort {
+    
     private static final Logger LOGGER = Logger.getLogger(LapRepositoryAdapter.class.getName());
     private final JpaLapRepository jpaRepository;
+    private final JpaSessionRepository jpaSessionRepository;
+    private final JpaDriverRepository jpaDriverRepository;
 
-    public LapRepositoryAdapter(JpaLapRepository jpaRepository) {
+    public LapRepositoryAdapter(
+            JpaLapRepository jpaRepository,
+            JpaSessionRepository jpaSessionRepository,
+            JpaDriverRepository jpaDriverRepository
+        ) {
         this.jpaRepository = jpaRepository;
+        this.jpaSessionRepository = jpaSessionRepository;
+        this.jpaDriverRepository = jpaDriverRepository;
     }
 
     @Override
@@ -40,18 +45,25 @@ public class LapRepositoryAdapter implements LapRepositoryPort {
 
     private LapEntity toEntity(Lap lap) {
         LapEntity entity = new LapEntity();
-        if (lap.session() != null) {
-            SessionEntity sessionEntity = new SessionEntity();
-            sessionEntity.setSessionKey(lap.session().sessionKey());
-            entity.setSession(sessionEntity);
+        if (lap.sessionKey() != null) {
+            jpaSessionRepository.findById(lap.sessionKey())
+                    .ifPresentOrElse(
+                        entity::setSession,
+                        () -> LOGGER.warning("No SessionEntity found for session_key: " + lap.sessionKey())
+                    );
         }
-        if (lap.driver() != null) {
-            DriverEntity driverEntity = new DriverEntity();
-            driverEntity.setDriverNumber(lap.driver().driverNumber());
-            entity.setDriver(driverEntity);
+        if (lap.driverNumber() != null) {
+            jpaDriverRepository.findByDriverNumber(lap.driverNumber())
+                    .ifPresentOrElse(
+                        entity::setDriver,
+                        () -> LOGGER.warning("No DriverEntity found for driver_number: " + lap.driverNumber())
+                    );
         }
         entity.setLapNumber(lap.lapNumber());
         entity.setLapDuration(lap.lapDuration());
+        entity.setIOneSpeed(lap.iOneSpeed());
+        entity.setITwoSpeed(lap.iTwoSpeed());
+        entity.setStSpeed(lap.sTSpeed());
         entity.setSector1Duration(lap.sector1Duration());
         entity.setSector2Duration(lap.sector2Duration());
         entity.setSector3Duration(lap.sector3Duration());
@@ -61,16 +73,13 @@ public class LapRepositoryAdapter implements LapRepositoryPort {
     }
 
     private Lap toDomain(LapEntity entity) {
-        Session session = entity.getSession() != null
-                ? new Session(entity.getSession().getSessionKey(), null, null, null, null, null)
-                : null;
-        Driver driver = entity.getDriver() != null
-                ? new Driver(entity.getDriver().getDriverNumber(), null, null, null, null)
-                : null;
         return new Lap(
                 entity.getLapNumber(),
-                session,
-                driver,
+                entity.getSession().getSessionKey(),
+                entity.getDriver().getDriverNumber(),
+                entity.getIOneSpeed(),
+                entity.getITwoSpeed(),
+                entity.getStSpeed(),
                 entity.getLapDuration(),
                 entity.getSector1Duration(),
                 entity.getSector2Duration(),

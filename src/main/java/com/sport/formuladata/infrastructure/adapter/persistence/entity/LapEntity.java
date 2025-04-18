@@ -24,6 +24,15 @@ public class LapEntity {
 
     @Column(name = "lap_duration")
     private Float lapDuration;
+    
+    @Column(name = "i1_speed")
+    private Float iOneSpeed;
+    
+    @Column(name = "i2_speed")
+    private Float iTwoSpeed;
+    
+    @Column(name = "st_speed")
+    private Float stSpeed;
 
     @Column(name = "sector_1_duration")
     private Float sector1Duration;
@@ -78,6 +87,30 @@ public class LapEntity {
 
     public void setLapDuration(Float lapDuration) {
         this.lapDuration = lapDuration;
+    }
+
+    public Float getIOneSpeed() {
+        return iOneSpeed;
+    }
+
+    public void setIOneSpeed(Float iOneSpeed) {
+        this.iOneSpeed = iOneSpeed;
+    }
+
+    public Float getITwoSpeed() {
+        return iTwoSpeed;
+    }
+
+    public void setITwoSpeed(Float iTwoSpeed) {
+        this.iTwoSpeed = iTwoSpeed;
+    }
+
+    public Float getStSpeed() {
+        return stSpeed;
+    }
+
+    public void setStSpeed(Float stSpeed) {
+        this.stSpeed = stSpeed;
     }
 
     public Float getSector1Duration() {

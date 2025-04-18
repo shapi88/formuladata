@@ -7,5 +7,5 @@ public interface FetchOpenF1DataUseCase {
     void fetchAndStoreDrivers();
     void fetchAndStoreIntervals();
     void fetchAndStorePositions();
-    void fetch();
+    void fetchAndStoreLaps();
 }

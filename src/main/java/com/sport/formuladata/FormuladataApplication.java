@@ -22,7 +22,7 @@ public class FormulaDataApplication {
     CommandLineRunner run(FetchOpenF1DataUseCase fetchOpenF1DataUseCase) {
         return args -> {
             try {
-                fetchOpenF1DataUseCase.fetchAndStoreAllData();
+                //fetchOpenF1DataUseCase.fetchAndStoreAllData();
                 System.out.println("OpenF1 data imported on startup");
             } catch (Exception e) {
                 System.err.println("Failed to import OpenF1 data: " + e.getMessage());

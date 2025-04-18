@@ -66,17 +66,16 @@ public class OpenF1ApiAdapter implements OpenF1ApiPort {
     }
 
     @Override
-    public List<Lap> fetchLaps(Integer sessionKey, Integer driverNumber) {
+    public List<Lap> fetchLaps(Integer sessionKey) {
         try {
             Lap[] laps = openF1RestClient.get()
                     .uri(uriBuilder -> uriBuilder
                             .path("/laps")
                             .queryParam("session_key", sessionKey)
-                            .queryParam("driver_number", driverNumber)
                             .build())
                     .retrieve()
                     .body(Lap[].class);
-            LOGGER.info("Fetched " + (laps != null ? laps.length : 0) + " laps for session " + sessionKey + ", driver " + driverNumber);
+            LOGGER.info("Fetched " + (laps != null ? laps.length : 0) + " laps for session " + sessionKey);
             return laps != null ? Arrays.asList(laps) : Collections.emptyList();
         } catch (RestClientException e) {
             LOGGER.severe("Failed to fetch laps: " + e.getMessage());

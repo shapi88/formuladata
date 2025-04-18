@@ -9,14 +9,13 @@ import java.util.List;
 import java.util.logging.Logger;
 
 @Service
-public class OpenF1Service implements FetchOpenF1DataUseCase, GetMeetingsUseCase, GetSessionsUseCase, GetDriversUseCase, GetCarDataUseCase, GetLapsUseCase, GetPositionsUseCase {
+public class OpenF1Service implements FetchOpenF1DataUseCase, GetMeetingsUseCase, GetSessionsUseCase, GetDriversUseCase {
     private static final Logger LOGGER = Logger.getLogger(OpenF1Service.class.getName());
     private final OpenF1ApiPort openF1ApiPort;
     private final MeetingRepositoryPort meetingRepositoryPort;
     private final SessionRepositoryPort sessionRepositoryPort;
     private final DriverRepositoryPort driverRepositoryPort;
     private final LapRepositoryPort lapRepositoryPort;
-    private final CarDataRepositoryPort carDataRepositoryPort;
     private final IntervalRepositoryPort intervalRepositoryPort;
     private final PositionRepositoryPort positionRepositoryPort;
 
@@ -35,18 +34,18 @@ public class OpenF1Service implements FetchOpenF1DataUseCase, GetMeetingsUseCase
         this.sessionRepositoryPort = sessionRepositoryPort;
         this.driverRepositoryPort = driverRepositoryPort;
         this.lapRepositoryPort = lapRepositoryPort;
-        this.carDataRepositoryPort = carDataRepositoryPort;
         this.intervalRepositoryPort = intervalRepositoryPort;
         this.positionRepositoryPort = positionRepositoryPort;
     }
 
     @Override
     public void fetchAndStoreAllData() {
-        //this.fetchAndStoreMeetings();
-        //this.fetchAndStoreDrivers();
-        //this.fetchAndStoreSessions();
-        //this.fetchAndStoreIntervals();
-        //this.fetchAndStorePositions();
+        this.fetchAndStoreMeetings();
+        this.fetchAndStoreDrivers();
+        this.fetchAndStoreSessions();
+        this.fetchAndStoreIntervals();
+        this.fetchAndStorePositions();
+        this.fetchAndStoreLaps();
     }
 
     @Override
@@ -66,7 +65,6 @@ public class OpenF1Service implements FetchOpenF1DataUseCase, GetMeetingsUseCase
 
     @Override
     public void fetchAndStoreMeetings() {
-            // Meetings
             List<Meeting> existingMeetings = meetingRepositoryPort.findAll();
             List<Meeting> newMeetings = openF1ApiPort.fetchMeetings().stream()
                     .filter(m -> existingMeetings.stream().noneMatch(em -> em.meetingKey().equals(m.meetingKey())))
@@ -130,71 +128,63 @@ public class OpenF1Service implements FetchOpenF1DataUseCase, GetMeetingsUseCase
 
     @Override
     public void fetchAndStoreDrivers() {
-        // Drivers
         List<Driver> existingDrivers = driverRepositoryPort.findAll();
         List<Driver> newDrivers = openF1ApiPort.fetchDrivers().stream()
                 .filter(d -> existingDrivers.stream().noneMatch(ed -> ed.driverNumber().equals(d.driverNumber())))
                 .toList();
         LOGGER.info("Processing " + newDrivers.size() + " new drivers");
         driverRepositoryPort.saveAll(newDrivers);
-}
+    }
 
     @Override
     public void fetchAndStorePositions() {
         List<Session> existingSessions = sessionRepositoryPort.findAll();
-        List<Driver> existingDrivers = driverRepositoryPort.findAll();
         for (Session existingSession : existingSessions) {
             Integer sessionKey = existingSession.sessionKey();
             List<Position> existingPositions = positionRepositoryPort.findAll();
             List<Position> apiPositions = openF1ApiPort.fetchPositions(sessionKey);
-            //for (Driver existingDriver : existingDrivers) {
-                //Integer driverNumber = existingDriver.driverNumber();
-                List<Position> newPositions = apiPositions.stream().filter(p -> existingPositions.stream().noneMatch(ep ->
-                                ep.sessionKey() != null && p.sessionKey() != null &&
-                                ep.driverNumber() != null && p.driverNumber() != null &&
-                                ep.sessionKey().equals(p.sessionKey()) &&
-                                ep.driverNumber().equals(p.driverNumber()) &&
-                                ep.date().equals(p.date())))
-                        .map(p -> {
-                            return new Position(
-                                    p.meetingKey(),
-                                    p.sessionKey(),
-                                    p.driverNumber(),
-                                    p.position(),
-                                    p.date()
-                            );
-                        })
-                        .toList();
-                LOGGER.info("Processing " + newPositions.size() + " new positions");
-                positionRepositoryPort.saveAll(newPositions);
-                continue;
-            //}
+            List<Position> newPositions = apiPositions.stream().filter(p -> existingPositions.stream().noneMatch(ep ->
+                            ep.sessionKey() != null && p.sessionKey() != null &&
+                            ep.driverNumber() != null && p.driverNumber() != null &&
+                            ep.sessionKey().equals(p.sessionKey()) &&
+                            ep.driverNumber().equals(p.driverNumber()) &&
+                            ep.date().equals(p.date())))
+                    .map(p -> {
+                        return new Position(
+                                p.meetingKey(),
+                                p.sessionKey(),
+                                p.driverNumber(),
+                                p.position(),
+                                p.date()
+                        );
+                    })
+                    .toList();
+            LOGGER.info("Processing " + newPositions.size() + " new positions");
+            positionRepositoryPort.saveAll(newPositions);
         }
     }
 
     @Override
-    public void fetch() {
-        /*
-       // Fetch Laps, CarData, Intervals for each new session and driver
-       for (Session session : newSessions) {
-        Integer sessionKey = session.sessionKey();
-        for (Driver driver : newDrivers) {
-            Integer driverNumber = driver.driverNumber();
-
-            // Laps
-            List<Lap> existingLaps = lapRepositoryPort.findAll();
-            List<Lap> apiLaps = openF1ApiPort.fetchLaps(sessionKey, driverNumber);
+    public void fetchAndStoreLaps() {
+        List<Session> existingSessions = sessionRepositoryPort.findAll();
+        List<Lap> existingLaps = lapRepositoryPort.findAll();
+        for (Session existingSession : existingSessions) {
+            Integer sessionKey = existingSession.sessionKey();
+            List<Lap> apiLaps = openF1ApiPort.fetchLaps(sessionKey);
             List<Lap> newLaps = apiLaps.stream()
                     .filter(l -> existingLaps.stream().noneMatch(el ->
-                            el.session() != null && l.session() != null &&
-                            el.driver() != null && l.driver() != null &&
-                            el.session().sessionKey().equals(l.session().sessionKey()) &&
-                            el.driver().driverNumber().equals(l.driver().driverNumber()) &&
+                            el.sessionKey() != null && l.sessionKey() != null &&
+                            el.driverNumber() != null && l.driverNumber() != null &&
+                            el.sessionKey().equals(l.sessionKey()) &&
+                            el.driverNumber().equals(l.driverNumber()) &&
                             el.lapNumber().equals(l.lapNumber())))
                     .map(l -> new Lap(
                             l.lapNumber(),
-                            session,
-                            driver,
+                            l.sessionKey(),
+                            l.driverNumber(),
+                            l.iOneSpeed(),
+                            l.iTwoSpeed(),
+                            l.sTSpeed(),
                             l.lapDuration(),
                             l.sector1Duration(),
                             l.sector2Duration(),
@@ -203,55 +193,8 @@ public class OpenF1Service implements FetchOpenF1DataUseCase, GetMeetingsUseCase
                             l.dateStart()
                     ))
                     .toList();
-            LOGGER.info("Processing " + newLaps.size() + " new laps for session " + sessionKey + ", driver " + driverNumber);
+            LOGGER.info("Processing " + newLaps.size() + " new laps for session " + sessionKey);
             lapRepositoryPort.saveAll(newLaps);
-
-            // Car Data
-            List<CarData> existingCarData = carDataRepositoryPort.findAll();
-            List<CarData> apiCarData = openF1ApiPort.fetchCarData(sessionKey, driverNumber);
-            List<CarData> newCarData = apiCarData.stream()
-                    .filter(cd -> existingCarData.stream().noneMatch(ecd ->
-                            ecd.session() != null && cd.session() != null &&
-                            ecd.driver() != null && cd.driver() != null &&
-                            ecd.session().sessionKey().equals(cd.session().sessionKey()) &&
-                            ecd.driver().driverNumber().equals(cd.driver().driverNumber()) &&
-                            ecd.date().equals(cd.date())))
-                    .map(cd -> new CarData(
-                            session,
-                            driver,
-                            cd.date(),
-                            cd.rpm(),
-                            cd.speed(),
-                            cd.gear(),
-                            cd.throttle(),
-                            cd.brake(),
-                            cd.drs()
-                    ))
-                    .toList();
-            LOGGER.info("Processing " + newCarData.size() + " new car data entries for session " + sessionKey + ", driver " + driverNumber);
-            carDataRepositoryPort.saveAll(newCarData);
         }
-
-    // Positions
-*/
-        throw new UnsupportedOperationException("Unimplemented method 'getAllPositions'");
-    }
-
-    @Override
-    public List<Position> getAllPositions() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAllPositions'");
-    }
-
-    @Override
-    public List<Lap> getAllLaps() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAllLaps'");
-    }
-
-    @Override
-    public List<CarData> getAllCarData() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getAllCarData'");
     }
 }
