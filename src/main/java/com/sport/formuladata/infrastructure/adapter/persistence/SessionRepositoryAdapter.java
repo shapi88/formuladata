@@ -1,5 +1,6 @@
 package com.sport.formuladata.infrastructure.adapter.persistence;
 
+import com.sport.formuladata.domain.dto.SessionDto;
 import com.sport.formuladata.domain.entity.Session;
 import com.sport.formuladata.domain.port.outbound.SessionRepositoryPort;
 import com.sport.formuladata.infrastructure.adapter.persistence.entity.SessionEntity;
@@ -36,6 +37,13 @@ public class SessionRepositoryAdapter implements SessionRepositoryPort {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<SessionDto> findAllDtos() {
+        return jpaRepository.findAll().stream()
+                .map(this::toDto)
+                .collect(Collectors.toList());
+    }
+
     private SessionEntity toEntity(Session session) {
         SessionEntity entity = new SessionEntity();
         entity.setSessionKey(session.sessionKey());
@@ -57,6 +65,17 @@ public class SessionRepositoryAdapter implements SessionRepositoryPort {
         return new Session(
                 entity.getSessionKey(),
                 entity.getMeeting().getMeetingKey(),
+                entity.getSessionType(),
+                entity.getSessionName(),
+                entity.getDateStart(),
+                entity.getDateEnd()
+        );
+    }
+
+    private SessionDto toDto(SessionEntity entity) {
+        return new SessionDto(
+                entity.getSessionKey(),
+                entity.getMeeting(),
                 entity.getSessionType(),
                 entity.getSessionName(),
                 entity.getDateStart(),

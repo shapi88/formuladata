@@ -1,5 +1,6 @@
 package com.sport.formuladata.application.service;
 
+import com.sport.formuladata.domain.dto.SessionDto;
 import com.sport.formuladata.domain.entity.*;
 import com.sport.formuladata.domain.port.inbound.*;
 import com.sport.formuladata.domain.port.outbound.*;
@@ -57,6 +58,11 @@ public class OpenF1Service implements FetchOpenF1DataUseCase, GetMeetingsUseCase
     public List<Session> getAllSessions() {
         return sessionRepositoryPort.findAll();
     }
+
+    @Override
+    public List<SessionDto> getAllSessionDtos() {
+        return sessionRepositoryPort.findAllDtos();
+    } 
 
     @Override
     public List<Driver> getAllDrivers() {
@@ -197,4 +203,5 @@ public class OpenF1Service implements FetchOpenF1DataUseCase, GetMeetingsUseCase
             lapRepositoryPort.saveAll(newLaps);
         }
     }
+
 }

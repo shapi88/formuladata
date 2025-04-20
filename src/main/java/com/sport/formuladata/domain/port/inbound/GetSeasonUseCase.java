@@ -1,11 +1,11 @@
 package com.sport.formuladata.domain.port.inbound;
 
+import java.util.List;
+
 import com.sport.formuladata.domain.dto.SessionDto;
 import com.sport.formuladata.domain.entity.Session;
 
-import java.util.List;
-
-public interface GetSessionsUseCase {
-    List<Session> getAllSessions();
-    List<SessionDto> getAllSessionDtos();
+public interface GetSeasonUseCase {
+    List<Session> getAllSeasons();
+    List<SessionDto> getAllSeasonDto();
 }

@@ -1,5 +1,6 @@
 package com.sport.formuladata.infrastructure.adapter.rest;
 
+import com.sport.formuladata.domain.dto.SessionDto;
 import com.sport.formuladata.domain.entity.Driver;
 import com.sport.formuladata.domain.entity.Meeting;
 import com.sport.formuladata.domain.entity.Session;
@@ -12,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/openf1")
+@RequestMapping("/api/f1/data")
 public class OpenF1Controller {
     private final FetchOpenF1DataUseCase fetchOpenF1DataUseCase;
     private final GetMeetingsUseCase getMeetingsUseCase;
@@ -50,5 +51,10 @@ public class OpenF1Controller {
     @GetMapping("/drivers")
     public List<Driver> getDrivers() {
         return getDriversUseCase.getAllDrivers();
+    }
+
+    @GetMapping("/season")
+    public List<SessionDto> getSeason() {
+        return getSessionsUseCase.getAllSessionDtos();
     }
 }
