@@ -1,0 +1,1 @@
+mkdir -p src/main/java/com/sport/formuladata/{domain/{entities,ports,dtos},application/{services,mappers},infrastructure/{adapters/{rest,persistence/{repositories}},config}} src/main/resources src/test/java/com/sport/formuladata/{domain,application,infrastructure}
