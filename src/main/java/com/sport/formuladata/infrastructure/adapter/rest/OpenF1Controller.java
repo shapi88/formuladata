@@ -14,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/f1/data")
+@CrossOrigin(origins = "http://localhost:3000") // todo more generic
 public class OpenF1Controller {
     private final FetchOpenF1DataUseCase fetchOpenF1DataUseCase;
     private final GetMeetingsUseCase getMeetingsUseCase;
