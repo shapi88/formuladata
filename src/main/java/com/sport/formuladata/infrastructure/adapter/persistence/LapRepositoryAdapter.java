@@ -3,6 +3,7 @@ package com.sport.formuladata.infrastructure.adapter.persistence;
 import com.sport.formuladata.domain.entity.Lap;
 import com.sport.formuladata.domain.port.outbound.LapRepositoryPort;
 import com.sport.formuladata.infrastructure.adapter.persistence.entity.LapEntity;
+
 import org.springframework.stereotype.Component;
 
 import java.util.List;

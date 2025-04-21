@@ -1,14 +1,14 @@
 package com.sport.formuladata.domain.dto;
 
-import com.sport.formuladata.infrastructure.adapter.persistence.entity.MeetingEntity;
-
 import java.time.ZonedDateTime;
+import java.util.List;
 
 public record SessionDto(
         Integer sessionKey,
-        MeetingEntity meeting,
+        MeetingDto meeting,
         String sessionType,
         String sessionName,
         ZonedDateTime dateStart,
-        ZonedDateTime dateEnd
+        ZonedDateTime dateEnd,
+        List<LapDto> laps
 ) {}

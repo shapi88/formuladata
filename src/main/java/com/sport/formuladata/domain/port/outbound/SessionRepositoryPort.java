@@ -9,4 +9,6 @@ public interface SessionRepositoryPort {
     void saveAll(List<Session> sessions);
     List<Session> findAll();
     List<SessionDto> findAllDtos();
+    List<SessionDto> findAllWithRelations();
+    List<SessionDto> findByYearWithRelations(Integer year, String session_name);
 }

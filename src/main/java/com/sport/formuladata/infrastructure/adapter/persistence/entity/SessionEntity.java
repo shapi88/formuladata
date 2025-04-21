@@ -2,6 +2,8 @@ package com.sport.formuladata.infrastructure.adapter.persistence.entity;
 
 import jakarta.persistence.*;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "sessions")
@@ -13,6 +15,9 @@ public class SessionEntity {
     @ManyToOne
     @JoinColumn(name = "meeting_key")
     private MeetingEntity meeting;
+
+    @OneToMany(mappedBy = "session")
+    private List<LapEntity> laps = new ArrayList<>();
 
     @Column(name = "session_type")
     private String sessionType;
@@ -40,6 +45,14 @@ public class SessionEntity {
 
     public void setMeeting(MeetingEntity meeting) {
         this.meeting = meeting;
+    }
+
+    public List<LapEntity> getLaps() {
+        return laps;
+    }
+
+    public void setLaps(List<LapEntity> laps) {
+        this.laps = laps;
     }
 
     public String getSessionType() {

@@ -65,6 +65,11 @@ public class OpenF1Service implements FetchOpenF1DataUseCase, GetMeetingsUseCase
     } 
 
     @Override
+    public List<SessionDto> getSessionDtosByYearAndSessionName(Integer year, String session_name) {
+        return sessionRepositoryPort.findByYearWithRelations(year, session_name);
+    } 
+
+    @Override
     public List<Driver> getAllDrivers() {
         return driverRepositoryPort.findAll();
     }

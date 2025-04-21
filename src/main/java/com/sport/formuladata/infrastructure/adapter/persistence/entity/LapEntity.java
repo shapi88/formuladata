@@ -16,7 +16,7 @@ public class LapEntity {
     private SessionEntity session;
 
     @ManyToOne
-    @JoinColumn(name = "driver_number")
+    @JoinColumn(name = "driver_number", referencedColumnName = "driver_number")
     private DriverEntity driver;
 
     @Column(name = "lap_number")

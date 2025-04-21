@@ -57,4 +57,11 @@ public class OpenF1Controller {
     public List<SessionDto> getSeason() {
         return getSessionsUseCase.getAllSessionDtos();
     }
+
+    @GetMapping("/seasons")
+    public List<SessionDto> getSessionDetailsByMeetingAndName(
+            @RequestParam("year") Integer year,
+            @RequestParam("sessionName") String sessionName) {
+        return getSessionsUseCase.getSessionDtosByYearAndSessionName(year, sessionName);
+    }
 }

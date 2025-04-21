@@ -8,4 +8,5 @@ import java.util.List;
 public interface GetSessionsUseCase {
     List<Session> getAllSessions();
     List<SessionDto> getAllSessionDtos();
+    List<SessionDto> getSessionDtosByYearAndSessionName(Integer year, String session_name);
 }
