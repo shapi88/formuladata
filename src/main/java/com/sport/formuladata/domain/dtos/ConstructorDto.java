@@ -2,11 +2,13 @@ package com.sport.formuladata.domain.dtos;
 
 import java.math.BigDecimal;
 
+import com.sport.formuladata.domain.entities.Country;
+
 public record ConstructorDto(
     String id,
     String name,
     String fullName,
-    String countryId,
+    Country country,
     Integer bestChampionshipPosition,
     Integer bestStartingGridPosition,
     Integer bestRaceResult,

@@ -3,6 +3,8 @@ package com.sport.formuladata.domain.dtos;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import com.sport.formuladata.domain.entities.Country;
+
 public record DriverDto(
     String id,
     String name,
@@ -15,9 +17,9 @@ public record DriverDto(
     LocalDate dateOfBirth,
     LocalDate dateOfDeath,
     String placeOfBirth,
-    String countryOfBirthId,
-    String nationalityId,
-    String secondNationalityId,
+    Country countryOfBirth,
+    Country nationality,
+    Country secondNationality,
     Integer bestChampionshipPosition,
     Integer bestStartingGridPosition,
     Integer bestRaceResult,

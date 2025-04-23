@@ -7,5 +7,6 @@ public record GrandPrixDto(
         String shortName,
         String abbreviation,
         //String countryId, // todo
-        Integer totalRacesHeld) {
+        Integer totalRacesHeld
+    ) {
 }
