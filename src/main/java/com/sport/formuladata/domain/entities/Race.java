@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @Builder
 public class Race {
     @Id
-    @Column
+    @Column(name = "id", nullable = false)
     private Integer id;
 
     @Column(nullable = false)

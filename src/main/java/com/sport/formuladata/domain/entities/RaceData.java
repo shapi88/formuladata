@@ -33,6 +33,10 @@ public class RaceData {
     private String driverNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "race_id", nullable = false)
+    private Race race;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "driver_id", nullable = false)
     private Driver driver;
 

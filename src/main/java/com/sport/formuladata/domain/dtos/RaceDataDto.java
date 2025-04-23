@@ -2,8 +2,10 @@ package com.sport.formuladata.domain.dtos;
 
 import java.math.BigDecimal;
 
+import com.sport.formuladata.domain.entities.Race;
+
 public record RaceDataDto(
-     //Integer raceId,
+     Integer raceId,
      RaceDto race,
      String type,
      Integer positionDisplayOrder,

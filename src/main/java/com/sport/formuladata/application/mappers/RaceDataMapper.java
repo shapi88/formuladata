@@ -5,30 +5,24 @@ import com.sport.formuladata.domain.entities.RaceData;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", 
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
+        uses = {RaceMapper.class, DriverMapper.class, ConstructorMapper.class})
 public interface RaceDataMapper {
+    @Mapping(target = "race", source = "race")
     @Mapping(target = "driver", source = "driver")
     @Mapping(target = "constructor", source = "constructor")
-    //@Mapping(target = "circuitId", source = "race.circuit")
-    //@Mapping(target = "engineManufacturerId", source = "engineManufacturer.id")
-    //@Mapping(target = "tyreManufacturerId", source = "tyreManufacturer.id")
     RaceDataDto toDto(RaceData raceData);
 
-    //Unmapped target property: "circuitId". 
-    //Mapping from property "Race race" to "RaceDto race"
-
+    @Mapping(target = "raceId", ignore = true)
     @Mapping(target = "driver", ignore = true)
     @Mapping(target = "constructor", ignore = true)
-    //@Mapping(target = "raceId", ignore = true)
-    // @Mapping(target = "engineManufacturer", ignore = true)
-    // @Mapping(target = "tyreManufacturer", ignore = true)
     RaceData toEntity(RaceDataDto raceDataDto);
 
+    @Mapping(target = "raceId", ignore = true)
     @Mapping(target = "driver", ignore = true)
     @Mapping(target = "constructor", ignore = true)
-    //@Mapping(target = "raceId", ignore = true)
-    // @Mapping(target = "engineManufacturer", ignore = true)
-    // @Mapping(target = "tyreManufacturer", ignore = true)
     void updateEntity(RaceDataDto raceDataDto, @MappingTarget RaceData raceData);
 }

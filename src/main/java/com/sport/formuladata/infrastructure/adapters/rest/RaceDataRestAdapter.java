@@ -20,8 +20,6 @@ public class RaceDataRestAdapter {
         return ResponseEntity.ok(service.findAll());
     }
 
- 
-
     @GetMapping("/race/{raceId}")
     public ResponseEntity<List<RaceDataDto>> findAllByRaceId(@PathVariable Integer raceId) {
         return ResponseEntity.ok(service.findAllByRaceId(raceId));
