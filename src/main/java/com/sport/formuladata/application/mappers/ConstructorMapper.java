@@ -8,7 +8,7 @@ import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface ConstructorMapper {
-    @Mapping(target = "countryId", source = "country.id")
+    @Mapping(target = "country", source = "country")
     ConstructorDto toDto(Constructor constructor);
 
     @Mapping(target = "country", ignore = true)

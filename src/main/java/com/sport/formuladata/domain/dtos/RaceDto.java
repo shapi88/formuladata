@@ -9,7 +9,7 @@ public record RaceDto(
     Integer round,
     LocalDate date,
     String time,
-    String grandPrixId,
+    GrandPrixDto grandPrix,
     String officialName,
     String qualifyingFormat,
     String sprintQualifyingFormat,

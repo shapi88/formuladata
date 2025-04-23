@@ -8,7 +8,7 @@ import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface RaceMapper {
-    @Mapping(target = "grandPrixId", source = "grandPrix.id")
+    @Mapping(target = "grandPrix", source = "grandPrix")
     @Mapping(target = "circuitId", source = "circuit.id")
     RaceDto toDto(Race race);
 

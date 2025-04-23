@@ -8,9 +8,9 @@ import org.mapstruct.MappingTarget;
 
 @Mapper(componentModel = "spring")
 public interface DriverMapper {
-    @Mapping(target = "countryOfBirthId", source = "countryOfBirth.id")
-    @Mapping(target = "nationalityId", source = "nationality.id")
-    @Mapping(target = "secondNationalityId", source = "secondNationality.id")
+    @Mapping(target = "countryOfBirth", source = "countryOfBirth")
+    @Mapping(target = "nationality", source = "nationality")
+    @Mapping(target = "secondNationality", source = "secondNationality")
     DriverDto toDto(Driver driver);
 
     @Mapping(target = "countryOfBirth", ignore = true)
